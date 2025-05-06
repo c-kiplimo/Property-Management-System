@@ -1,10 +1,11 @@
 package domain
 
 type Tenant struct {
+	ID           string
 	Email        string
 	MobileNumber string
 	Names        string
-	Unit         Unit
+	UnitID       string
 }
 
 type Unit struct {
