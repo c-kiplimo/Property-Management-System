@@ -7,7 +7,6 @@ import (
 	"tenant-management/cmd/api/routes"
 	"tenant-management/cmd/internal/user/repositories"
 	"tenant-management/cmd/internal/user/service"
-	_ "tenant-management/cmd/internal/user/service"
 	"tenant-management/cmd/internal/user/usecase"
 	"tenant-management/config"
 	"tenant-management/pkg/logger"
@@ -28,7 +27,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize DB client: %v", err)
 	}
-	defer dbClient.Close()
+	defer func(dbClient *config.DatabaseClient) {
+		err := dbClient.Close()
+		if err != nil {
+
+		}
+	}(dbClient)
 
 	// Apply migrations
 	if err := dbClient.ApplyMigrations(); err != nil {
@@ -37,11 +41,10 @@ func main() {
 
 	// Initialize repositories and services
 	userRepo := repositories.NewUserRepository(dbClient.DB)
-	jwtService := service.NewJWTService(cfg.User) // Pass secret from config or env
+	jwtService := service.NewJWTService(cfg.User)
 
-	// Setup usecase
+	// Setup usecases
 	authUsecase := usecase.NewAuthUsecase(userRepo, jwtService)
-
 	// Setup Gin
 	r := gin.Default()
 
