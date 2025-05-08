@@ -5,9 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"tenant-management/cmd/api/routes"
-	"tenant-management/cmd/internal/user/repositories"
-	"tenant-management/cmd/internal/user/service"
-	"tenant-management/cmd/internal/user/usecase"
+	tenantRepo "tenant-management/cmd/internal/tenant/repositories"
+	tenantUsecase "tenant-management/cmd/internal/tenant/usecase"
+	userRepo "tenant-management/cmd/internal/user/repositories"
+	userService "tenant-management/cmd/internal/user/service"
+	userUsecase "tenant-management/cmd/internal/user/usecase"
 	"tenant-management/config"
 	"tenant-management/pkg/logger"
 )
@@ -30,7 +32,7 @@ func main() {
 	defer func(dbClient *config.DatabaseClient) {
 		err := dbClient.Close()
 		if err != nil {
-
+			// Handle close error
 		}
 	}(dbClient)
 
@@ -39,22 +41,33 @@ func main() {
 		log.Fatalf("Migration failed: %v", err)
 	}
 
-	// Initialize repositories and services
-	userRepo := repositories.NewUserRepository(dbClient.DB)
-	jwtService := service.NewJWTService(cfg.User)
+	// Initialize repositories and services for users
+	userRepo := userRepo.NewUserRepository(dbClient.DB)
+	jwtService := userService.NewJWTService(cfg.User)
 
-	// Setup usecases
-	authUsecase := usecase.NewAuthUsecase(userRepo, jwtService)
+	// Setup user usecases
+	authUsecase := userUsecase.NewAuthUsecase(userRepo, jwtService)
+
+	// Initialize repositories and services for tenants
+	tenantRepo := tenantRepo.NewTenantRepository(dbClient.DB)
+	tenantUsecase := tenantUsecase.NewTenantUseCase(tenantRepo)
+
 	// Setup Gin
 	r := gin.Default()
 
-	// Register routes
+	// Register user routes
 	routes.RegisterUserRoutes(r, authUsecase)
+
+	// Register tenant routes
+	routes.RegisterTenantRoutes(r, tenantUsecase) // Register routes for tenant use case
 
 	// Run server
 	port := cfg.Port
 	if port == "" {
 		port = "8080"
 	}
-	r.Run(":" + port)
+	err = r.Run(":" + port)
+	if err != nil {
+		return
+	}
 }
