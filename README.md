@@ -180,9 +180,6 @@ Example: When a lease is signed
 - **Application Tests**: Test command/query handlers
 - **API Tests**: Test HTTP endpoints
 
-## Migration from Previous Architecture
-
-See `docs/migration-guide.md` for detailed steps to migrate from the previous flat structure.
 
 ## Contributing
 
