@@ -1,31 +1,53 @@
-# Makefile
+.PHONY: build run test clean migrate
 
-# Variables
-GO=go
-SWAG=swag
-FLYWAY=flyway
-
-# Set Go binary path
-BIN_DIR=./bin
-
-# Initialize the database
-initdb:
-	$(FLYWAY) migrate
-
-# Generate Swagger Docs
-swagger:
-	$(SWAG) init
-
-# Build the Go app
+# Build the application
 build:
-	$(GO) build -o $(BIN_DIR)/main .
+	go build -o bin/tenant-management cmd/api/main.go
 
-# Run the Go app
+# Run the application
 run:
-	$(GO) run main.go
+	go run cmd/api/main.go
 
-# Start the app with migration
-migrate-and-run:
-	$(MAKE) initdb && $(MAKE) run
+# Run tests
+test:
+	go test -v ./...
 
-.PHONY: initdb swagger build run migrate-and-run
+# Run tests with coverage
+test-coverage:
+	go test -v -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out
+
+# Clean build artifacts
+clean:
+	rm -rf bin/
+
+# Install dependencies
+deps:
+	go mod download
+	go mod tidy
+
+# Run database migrations (placeholder)
+migrate:
+	@echo "Running database migrations..."
+	# Add actual migration commands here
+
+# Format code
+fmt:
+	go fmt ./...
+
+# Lint code
+lint:
+	golangci-lint run
+
+# Generate docs
+docs:
+	@echo "Generating API documentation..."
+	# Add swagger/doc generation commands here
+
+# Docker build
+docker-build:
+	docker build -t tenant-management:latest .
+
+# Docker run
+docker-run:
+	docker run -p 8080:8080 --env-file .env tenant-management:latest
