@@ -10,7 +10,7 @@ type UnitRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func NewGormUnitRepository(db *gorm.DB) UnitRepository {
+func NewUnitRepositoryImpl(db *gorm.DB) UnitRepository {
 	return &UnitRepositoryImpl{db: db}
 }
 

@@ -1,13 +1,13 @@
 package http
 
 import (
-	"tenant-management/internal/domains/identity/application/handlers"
+	_ "tenant-management/internal/domains/identity/application/handlers"
 	identityHandlers "tenant-management/internal/domains/identity/application/handlers"
-	identityRepos "tenant-management/internal/domains/identity/infrastructure/repositories"
+	identityRepos "tenant-management/internal/domains/identity/domain/repositories"
 	identityHttp "tenant-management/internal/domains/identity/interfaces/http"
 
 	propertyHandlers "tenant-management/internal/domains/property/application/handlers"
-	propertyRepos "tenant-management/internal/domains/property/infrastructure/repositories"
+	propertyRepos "tenant-management/internal/domains/property/domain/repositories"
 	propertyHttp "tenant-management/internal/domains/property/interfaces/http"
 
 	"tenant-management/internal/shared/domain/events"
@@ -28,9 +28,9 @@ func NewServer(db *gorm.DB, cfg *config.Config) *Server {
 	eventDispatcher := events.NewEventDispatcher()
 
 	// Initialize repositories
-	landlordRepo := identityRepos.NewGormLandlordRepository(db)
-	propertyRepo := propertyRepos.NewGormPropertyRepository(db)
-	unitRepo := propertyRepos.NewGormUnitRepository(db)
+	landlordRepo := identityRepos.NewLandlordRepositoryImpl(db)
+	propertyRepo := propertyRepos.NewPropertyRepositoryImpl(db)
+	unitRepo := propertyRepos.NewUnitRepositoryImpl(db)
 
 	// Initialize handlers
 	identityCommandHandler := identityHandlers.NewIdentityCommandHandler(landlordRepo, eventDispatcher)

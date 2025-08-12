@@ -9,7 +9,7 @@ type PropertyRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func NewPropertyRepository(db *gorm.DB) PropertyRepository {
+func NewPropertyRepositoryImpl(db *gorm.DB) PropertyRepository {
 	return &PropertyRepositoryImpl{db: db}
 }
 

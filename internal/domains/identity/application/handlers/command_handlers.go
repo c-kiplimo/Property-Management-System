@@ -3,6 +3,7 @@ package handlers
 import (
 	"tenant-management/internal/domains/identity/application/commands"
 	"tenant-management/internal/domains/identity/domain/entities"
+	domainEvents "tenant-management/internal/domains/identity/domain/events" // ✅ domain events
 	"tenant-management/internal/domains/identity/domain/repositories"
 	"tenant-management/internal/shared/domain/events"
 )
@@ -34,8 +35,8 @@ func (h *IdentityCommandHandler) HandleRegisterLandlord(cmd *commands.RegisterLa
 		return nil, err
 	}
 
-	// Dispatch event
-	event := NewLandlordRegisteredEvent(landlord.ID, landlord.Email.Value)
+	// ✅ Use the domain event constructor from domainEvents package
+	event := domainEvents.NewLandlordRegisteredEvent(landlord.ID, landlord.Email.Value)
 	h.eventDispatcher.Dispatch(event)
 
 	return landlord, nil

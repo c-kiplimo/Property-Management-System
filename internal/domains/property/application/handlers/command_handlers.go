@@ -5,6 +5,7 @@ import (
 
 	"tenant-management/internal/domains/property/application/commands"
 	"tenant-management/internal/domains/property/domain/entities"
+	domainEvents "tenant-management/internal/domains/property/domain/events" // ✅ Import property domain events
 	"tenant-management/internal/domains/property/domain/repositories"
 	"tenant-management/internal/shared/domain/events"
 )
@@ -73,8 +74,8 @@ func (h *PropertyCommandHandler) HandleCreateProperty(cmd *commands.CreateProper
 		return nil, fmt.Errorf("failed to save property: %w", err)
 	}
 
-	// Dispatch property created event
-	event := NewPropertyCreatedEvent(property.ID, cmd.LandlordID)
+	// ✅ Use domain event from property events package
+	event := domainEvents.NewPropertyCreatedEvent(property.ID, cmd.LandlordID)
 	h.eventDispatcher.Dispatch(event)
 
 	return property, nil
@@ -107,8 +108,8 @@ func (h *PropertyCommandHandler) HandleAddUnit(cmd *commands.AddUnitCommand) (*e
 		return nil, fmt.Errorf("failed to save unit: %w", err)
 	}
 
-	// Dispatch unit added event
-	event := NewUnitAddedEvent(unit.ID, cmd.PropertyID)
+	// ✅ Use domain event from property events package
+	event := domainEvents.NewUnitAddedEvent(unit.ID, cmd.PropertyID)
 	h.eventDispatcher.Dispatch(event)
 
 	return unit, nil

@@ -15,7 +15,7 @@ type Config struct {
 
 func Load() *Config {
 	return &Config{
-		DatabaseURL:        getEnv("DATABASE_URL", "host=localhost user=postgres password=postgres dbname=property_management port=5432 sslmode=disable"),
+		DatabaseURL:        getEnv("DATABASE_URL", "host=localhost user=postgres password=smartcode dbname=property_management port=5432 sslmode=disable"),
 		GoogleClientID:     getEnv("GOOGLE_CLIENT_ID", ""),
 		GoogleClientSecret: getEnv("GOOGLE_CLIENT_SECRET", ""),
 		GoogleRedirectURL:  getEnv("GOOGLE_REDIRECT_URL", "http://localhost:8080/api/auth/callback"),

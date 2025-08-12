@@ -2,12 +2,12 @@ package main
 
 import (
 	"log"
-	"net/http"
+	"net/http" // keep standard http for ListenAndServe
 	"os"
 
-	"property-management/internal/interfaces/http"
-	"property-management/internal/shared/infrastructure/config"
-	"property-management/internal/shared/infrastructure/database"
+	httpserver "tenant-management/internal/interfaces/http" // alias to avoid conflict
+	"tenant-management/internal/shared/infrastructure/config"
+	"tenant-management/internal/shared/infrastructure/database"
 
 	"github.com/joho/godotenv"
 )
@@ -24,8 +24,8 @@ func main() {
 	// Initialize database
 	db := database.Initialize(cfg.DatabaseURL)
 
-	// Initialize HTTP server
-	server := http.NewServer(db, cfg)
+	// Initialize HTTP server (our package)
+	server := httpserver.NewServer(db, cfg)
 
 	port := os.Getenv("PORT")
 	if port == "" {
